@@ -13,4 +13,8 @@ class Product extends Model
       'price',
       'stock'  
     ];
+
+    public function detail(){
+        return $this->hasMany(SalesDetail::class);
+    }
 }

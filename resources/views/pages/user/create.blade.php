@@ -3,8 +3,7 @@
 
 <section>
     <div class="row">
-        <div class="col-lg-8">
-            
+        <div class="col-lg-8">  
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Vertical Form</h5>

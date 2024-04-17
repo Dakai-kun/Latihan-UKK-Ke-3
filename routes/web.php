@@ -46,4 +46,10 @@ Route::middleware('isLogin')->group(function () {
 
     Route::get('/dashboard/sales', [DashboardController::class, 'sales'])->name('sale');
     Route::post('/dashboard/sales/store', [SaleController::class, 'store'])->name('sale.store');
+    Route::post('/dashboard/sales/invoice/delete/{id}', [SaleController::class, 'delete_sale'])->name('delete.sale');
+    Route::get('/dashboard/sales/invoice/{id}', [SaleController::class, 'invoice'])->name('sale.invoice');
+    Route::get('/dashboard/detail', [DashboardController::class, 'detail'])->name('detail');
+    Route::delete('/dashboard/detail/destroy/{id}', [SaleController::class, 'detail_destroy'])->name('detail.destroy');
+
+    Route::get('/dashboard/detail/report', [SaleController::class, 'export_excel_detail'])->name('report');
 });

@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DetailExport;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SalesDetail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SaleController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'customer_name' => 'required',
             'address' => 'required',
@@ -33,6 +37,7 @@ class SaleController extends Controller
         $newSale = Sale::create([
             'customer_id' => $newCustomer->id,
             'date' => date('Y-m-d'),
+            'user_id' => auth()->user()->id,
             'price_total' => $totalPrice,
         ]);
 
@@ -53,12 +58,38 @@ class SaleController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Sale created successfully');
+        return redirect('/dashboard/sales/invoice/' . $newSale->id)->with('success', 'Sale created successfully');
     }
 
-    public function invoice(Request $request){
-        $sale = Sale::all();
-        $products = Product::all();
-        return view('pages.goods.sale.invoice', compact('sale', 'products'));
+    public function invoice($id)
+    {
+        $customer = Customer::find($id);
+        $sale = Sale::find($id);
+        $details = SalesDetail::where('sale_id', $id)->get();
+        return view('pages.goods.product.invoice', compact('sale', 'details', 'customer'));
+    }
+
+    public function export_excel_detail()
+    {
+        return Excel::download(new DetailExport, 'detail-sales.xlsx');
+    }
+
+    public function pdf(){
+        $sales = Sale::all();
+        $pdf = Pdf::loadview('pages.goods.product.pdf', ['sales' => $sales]);
+        return $pdf->download('sales.pdf');
+    }
+
+    public function detail_destroy($id)
+    {
+        Sale::find($id)->delete();
+        SalesDetail::where('sale_id', $id)->delete();
+        return redirect()->back()->with('success', 'Detail Sale deleted successfully');
+    }
+
+    public function delete_sale($id)
+    {
+        Sale::find($id)->delete();
+        return redirect('/dashboard/sales')->with('success', 'Sale Rejected');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\SalesDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,5 +34,11 @@ class DashboardController extends Controller
         $sale = Sale::all();
         $product = Product::all();
         return view ('', compact('sale', 'product'));
+    }
+
+    public function detail(){
+        $detail = SalesDetail::all();
+        $sales = Sale::all();
+        return view('pages.goods.detail.detail', compact('detail','sales'));
     }
 }
